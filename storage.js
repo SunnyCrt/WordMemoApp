@@ -101,6 +101,50 @@ const storage = {
     },
 
     /**
+     * Data Import (Merge)
+     */
+    importData(data) {
+        const currentFolders = this.getFolders();
+        const currentWords = this.getWords();
+        let folderCount = 0;
+        let wordCount = 0;
+
+        const importedFolders = data.filter(item => item.type === 'Folder');
+        const importedWords = data.filter(item => item.type === 'Word');
+
+        // Merge Folders
+        importedFolders.forEach(f => {
+            if (!currentFolders.some(cf => cf.id === f.id)) {
+                currentFolders.push({
+                    id: f.id,
+                    name: f.name,
+                    createdAt: f.createdAt || new Date().toISOString()
+                });
+                folderCount++;
+            }
+        });
+
+        // Merge Words
+        importedWords.forEach(w => {
+            if (!currentWords.some(cw => cw.id === w.id)) {
+                currentWords.push({
+                    id: w.id,
+                    text: w.text,
+                    folderId: w.folderId,
+                    color: w.color || '#e2e8f0',
+                    createdAt: w.createdAt || new Date().toISOString()
+                });
+                wordCount++;
+            }
+        });
+
+        if (folderCount > 0) this.saveFolders(currentFolders);
+        if (wordCount > 0) this.saveWords(currentWords);
+
+        return { folderCount, wordCount };
+    },
+
+    /**
      * Theme management
      */
     getTheme() {

@@ -401,7 +401,67 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleImport(e) {
-        alert("가져오기 기능은 데이터 형식 검증 후 적용됩니다. (JSON 권장)");
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const content = event.target.result;
+            try {
+                const data = parseCSV(content);
+                if (data.length === 0) throw new Error("가져올 데이터가 없거나 형식이 잘못되었습니다.");
+
+                const result = storage.importData(data);
+                alert(`가져오기 완료!\n새로 추가된 폴더: ${result.folderCount}개\n새로 추가된 단어: ${result.wordCount}개`);
+
+                // UI Refresh
+                renderFolders();
+                renderWords();
+                hideModals();
+            } catch (err) {
+                console.error(err);
+                alert("파일을 가져오는 중 오류가 발생했습니다: " + err.message);
+            }
+            // Reset input so the same file can be selected again
+            e.target.value = '';
+        };
+        reader.readAsText(file);
+    }
+
+    /**
+     * CSV Parser with Quote Handling
+     */
+    function parseCSV(csvText) {
+        const lines = csvText.split(/\r?\n/);
+        if (lines.length < 2) return [];
+
+        const headers = ["type", "id", "text", "folderId", "createdAt"]; // Fixed based on export order
+        const results = [];
+
+        // Start from line 1 (skipping header)
+        for (let i = 1; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+
+            // Simple regex for CSV with quotes
+            const matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+            if (!matches) continue;
+
+            const values = matches.map(v => v.replace(/^"|"$/g, '').trim());
+            const row = {};
+
+            // Map values to keys based on export format: Type,ID,Text/Name,Folder/Color,Created
+            row.type = values[0];
+            row.id = values[1];
+            row.name = values[2]; // For Folder
+            row.text = values[2]; // For Word
+            row.folderId = values[3]; // For Word (it's the 4th column)
+            row.color = values[3];    // For Word (if color was stored there, but export uses folderId)
+            row.createdAt = values[4];
+
+            results.push(row);
+        }
+        return results;
     }
 
     init();
