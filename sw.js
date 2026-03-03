@@ -1,4 +1,4 @@
-const CACHE_NAME = 'word-memo-v4';
+const CACHE_NAME = 'word-memo-v5';
 const ASSETS = [
     './',
     'index.html',
