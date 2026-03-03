@@ -35,7 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         deleteModal: document.getElementById('delete-modal'),
         wordInput: document.getElementById('word-input'),
         folderInput: document.getElementById('folder-input'),
-        searchInput: document.getElementById('search-input')
+        searchInput: document.getElementById('search-input'),
+        importInput: document.getElementById('import-input')
     };
 
     /**
