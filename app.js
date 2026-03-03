@@ -214,12 +214,12 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.folderDropdown.classList.add('hidden');
             elements.sortMenu.classList.add('hidden');
             elements.moreMenu.classList.add('hidden');
-            // Overlay is handled by its own click listener
         };
 
         elements.sortPopupBtn.onclick = (e) => {
             e.stopPropagation();
-            showModal(elements.sortMenu);
+            hideModals(); // Close others
+            elements.sortMenu.classList.toggle('hidden');
         };
 
         elements.searchPopupBtn.onclick = (e) => {
@@ -234,7 +234,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         elements.moreMenuBtn.onclick = (e) => {
             e.stopPropagation();
-            showModal(elements.moreMenu);
+            hideModals(); // Close others
+            elements.moreMenu.classList.toggle('hidden');
         };
 
         document.getElementById('word-confirm').onclick = handleWordSave;

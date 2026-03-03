@@ -30,11 +30,16 @@ body {
 .mobile-container {
     width: 100%;
     max-width: 500px;
+    height: 100vh;
+    height: 100dvh;
+    /* Dynamic viewport height for mobile browsers */
     background-color: var(--bg-color);
     position: relative;
     display: flex;
     flex-direction: column;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    /* Ensure content doesn't spill out */
 }
 
 /* --- Top Bar --- */
@@ -130,7 +135,9 @@ body {
 .content {
     flex: 1;
     padding: 20px;
-    padding-bottom: 100px;
+    overflow-y: auto;
+    /* Enable internal scrolling */
+    -webkit-overflow-scrolling: touch;
 }
 
 .word-chips-grid {
@@ -190,11 +197,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: sticky;
-    bottom: 0;
+    position: relative;
+    /* Changed from sticky since parent is flex */
     padding: 0 15px;
     padding-bottom: var(--safe-area-bottom);
     z-index: 500;
+    flex-shrink: 0;
 }
 
 .toolbar-left,
@@ -295,6 +303,8 @@ body {
 }
 
 .modal-overlay.hidden {
+    display: none;
+    /* Use display none to prevent interference */
     opacity: 0;
     pointer-events: none;
 }
@@ -322,7 +332,8 @@ body {
 
 .floating-menu {
     position: absolute;
-    bottom: 80px;
+    bottom: 75px;
+    /* Positioned just above the toolbar */
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 8px;
