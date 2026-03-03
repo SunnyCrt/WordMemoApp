@@ -1,0 +1,446 @@
+:root {
+    --primary-color: #555e67;
+    --bg-color: #f7f7f7;
+    --card-bg: #ffffff;
+    --text-main: #333333;
+    --text-muted: #888888;
+    --border-color: #dddddd;
+    --overlay-bg: rgba(0, 0, 0, 0.4);
+
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #e0e0e0;
+    /* Desktop background */
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.mobile-container {
+    width: 100%;
+    max-width: 500px;
+    background-color: var(--bg-color);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Top Bar --- */
+.top-bar {
+    padding: 15px 20px;
+    background-color: var(--bg-color);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.title {
+    width: 100%;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text-main);
+}
+
+.folder-selector-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.folder-select-btn {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+}
+
+.folder-select-btn .arrow-icon {
+    font-size: 0.8rem;
+    margin-left: 8px;
+    color: var(--text-muted);
+}
+
+.word-count {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding-bottom: 8px;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    position: absolute;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 2000;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.dropdown-menu.hidden {
+    display: none;
+}
+
+.dropdown-item,
+.add-btn-item {
+    width: 100%;
+    padding: 12px 16px;
+    text-align: left;
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-item:hover {
+    background-color: #f5f5f5;
+}
+
+.add-btn-item {
+    color: #555;
+    font-weight: 600;
+}
+
+/* --- Word Chips --- */
+.content {
+    flex: 1;
+    padding: 20px;
+    padding-bottom: 100px;
+}
+
+.word-chips-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.word-chip {
+    padding: 8px 16px;
+    border-radius: 20px;
+    background-color: #e2e8f0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.1s, opacity 0.2s;
+    position: relative;
+    user-select: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.word-chip:active {
+    transform: scale(0.95);
+}
+
+.word-chip.selected {
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.word-chip.highlight {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(85, 94, 103, 0.4);
+    }
+
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(85, 94, 103, 0);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(85, 94, 103, 0);
+    }
+}
+
+/* --- Bottom Toolbar --- */
+.bottom-toolbar {
+    height: 70px;
+    background-color: #f1f1f1;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    bottom: 0;
+    padding: 0 15px;
+    padding-bottom: var(--safe-area-bottom);
+    z-index: 500;
+}
+
+.toolbar-left,
+.toolbar-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.toolbar-left {
+    gap: 5px;
+}
+
+.toolbar-right {
+    justify-content: flex-end;
+}
+
+.toolbar-center {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+}
+
+.tool-btn {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-main-btn {
+    width: 60px;
+    height: 60px;
+    background-color: #555e67;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 2.22rem;
+    cursor: pointer;
+    margin-top: -30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Selection Bar */
+.selection-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background-color: #ffffff;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+    z-index: 150;
+    transition: transform 0.3s ease-out;
+}
+
+.selection-bar.hidden {
+    transform: translateY(100%);
+}
+
+.selected-text {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.selection-actions {
+    display: flex;
+    gap: 40px;
+}
+
+/* --- Popups --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--overlay-bg);
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
+    transition: opacity 0.3s;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.popup {
+    background: white;
+    border-radius: 12px;
+}
+
+.bottom-popup {
+    position: absolute;
+    bottom: 20px;
+    width: 90%;
+    max-width: 450px;
+    padding: 20px;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.center-popup {
+    align-self: center;
+    padding: 30px;
+    text-align: center;
+    width: 80%;
+}
+
+.floating-menu {
+    position: absolute;
+    bottom: 80px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+    overflow: hidden;
+}
+
+#sort-menu {
+    left: 15px;
+}
+
+#more-menu {
+    right: 15px;
+}
+
+.menu-item {
+    padding: 15px 20px;
+    border: none;
+    background: white;
+    text-align: left;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+}
+
+/* UI Elements inside popups */
+.popup-body input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.char-limit {
+    text-align: right;
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 5px;
+}
+
+.color-selector {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.color-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.color-circle.selected {
+    border-color: #555;
+}
+
+.popup-folder-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fdfdfd;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.popup-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.popup-actions button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+}
+
+.btn-secondary {
+    background-color: #fff;
+    border: 1px solid #ddd !important;
+}
+
+.btn-primary {
+    background-color: #555e67;
+    color: white;
+}
+
+/* Search UI in popup */
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-nav {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.nav-btn {
+    background: #eee;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+}
+
+.hidden {
+    display: none !important;
+}

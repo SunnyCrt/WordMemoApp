@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>단어메모 (MY WORD)</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#555e67">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3220/3220793.png">
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW Registered'))
+                    .catch(err => console.log('SW Failed', err));
+            });
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="app" class="mobile-container">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <h1 class="title">MY WORD</h1>
+            <div class="folder-selector-container">
+                <button id="folder-select-btn" class="folder-select-btn">
+                    <span id="current-folder-name">ALL</span>
+                    <span class="arrow-icon">∨</span>
+                </button>
+            </div>
+            <div id="word-count" class="word-count">0 words</div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="content">
+            <div id="word-chips-container" class="word-chips-grid">
+                <!-- Word chips go here -->
+            </div>
+        </main>
+
+        <!-- Bottom Toolbar -->
+        <footer class="bottom-toolbar">
+            <div class="toolbar-left">
+                <button id="sort-popup-btn" class="tool-btn" aria-label="정렬">↕</button>
+                <button id="search-popup-btn" class="tool-btn" aria-label="검색">🔍</button>
+            </div>
+            <div class="toolbar-center">
+                <button id="add-word-btn" class="add-main-btn" aria-label="단어 추가">+</button>
+            </div>
+            <div class="toolbar-right">
+                <button id="more-menu-btn" class="tool-btn" aria-label="더보기">⋯</button>
+            </div>
+        </footer>
+
+        <!-- Multi-Selection Action Bar (Hidden by default) -->
+        <div id="selection-action-bar" class="selection-bar hidden">
+            <span id="selected-count" class="selected-text">0개 선택됨</span>
+            <div class="selection-actions">
+                <button id="move-selected-btn" class="tool-btn" aria-label="이동">📁</button>
+                <button id="delete-selected-btn" class="tool-btn" aria-label="삭제">🗑️</button>
+                <button id="cancel-selection-btn" class="tool-btn" aria-label="취소">✕</button>
+            </div>
+        </div>
+
+        <!-- Popups & Modals -->
+        <div id="modal-overlay" class="modal-overlay hidden">
+            <!-- Add/Edit Word Popup -->
+            <div id="word-modal" class="popup bottom-popup hidden">
+                <div class="popup-body">
+                    <input type="text" id="word-input" maxlength="20" placeholder="단어를 입력하세요">
+                    <div class="char-limit"><span id="word-char-count">0</span>/20</div>
+                    <div class="color-selector">
+                        <button class="color-circle selected" data-color="#e2e8f0"
+                            style="background-color: #e2e8f0;"></button>
+                        <button class="color-circle" data-color="#fef3c7" style="background-color: #fef3c7;"></button>
+                        <button class="color-circle" data-color="#d1fae5" style="background-color: #d1fae5;"></button>
+                        <button class="color-circle" data-color="#dbeafe" style="background-color: #dbeafe;"></button>
+                        <button class="color-circle" data-color="#f3e8ff" style="background-color: #f3e8ff;"></button>
+                        <button class="color-circle" data-color="#fee2e2" style="background-color: #fee2e2;"></button>
+                    </div>
+                    <button id="word-folder-select" class="popup-folder-select">ALL ∨</button>
+                    <div class="popup-actions">
+                        <button id="word-cancel" class="btn-secondary">취소</button>
+                        <button id="word-confirm" class="btn-primary">확인</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Folder Popup -->
+            <div id="folder-modal" class="popup bottom-popup hidden">
+                <div class="popup-body">
+                    <input type="text" id="folder-input" maxlength="10" placeholder="폴더 이름을 입력하세요">
+                    <div class="char-limit"><span id="folder-char-count">0</span>/10</div>
+                    <div class="popup-actions">
+                        <button id="folder-cancel" class="btn-secondary">취소</button>
+                        <button id="folder-confirm" class="btn-primary">확인</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Popup -->
+            <div id="search-modal" class="popup bottom-popup hidden">
+                <div class="popup-body">
+                    <div class="search-input-wrapper">
+                        <input type="text" id="search-input" placeholder="검색어를 입력하세요">
+                        <div class="search-nav">
+                            <span id="search-index">0/0</span>
+                            <button id="search-prev" class="nav-btn">∧</button>
+                            <button id="search-next" class="nav-btn">∨</button>
+                        </div>
+                    </div>
+                    <div class="popup-actions">
+                        <button id="search-cancel" class="btn-secondary">취소</button>
+                        <button id="search-confirm" class="btn-primary">검색</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Confirmation -->
+            <div id="delete-modal" class="popup center-popup hidden">
+                <div class="popup-body">
+                    <p>정말 삭제하시겠습니까?</p>
+                    <div class="popup-actions">
+                        <button id="delete-cancel" class="btn-secondary">취소</button>
+                        <button id="delete-confirm" class="btn-primary">확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Menus (Relative to container) -->
+        <div id="sort-menu" class="popup floating-menu hidden">
+            <button class="menu-item" data-sort="created">등록순</button>
+            <button class="menu-item" data-sort="asc">오름차순</button>
+            <button class="menu-item" data-sort="desc">내림차순</button>
+        </div>
+
+        <div id="more-menu" class="popup floating-menu hidden">
+            <button id="export-btn" class="menu-item">⬆ 장치로 백업 파일 내보내기</button>
+            <button id="import-btn" class="menu-item">⬇ 장치에서 백업 파일 가져오기</button>
+            <input type="file" id="import-input" hidden accept=".csv,.json">
+        </div>
+
+        <!-- Global Folder Dropdown -->
+        <div id="folder-dropdown" class="dropdown-menu hidden">
+            <div id="folder-list-items">
+                <!-- Folders go here -->
+            </div>
+            <button id="add-folder-trigger" class="add-btn-item">+ 폴더 추가</button>
+        </div>
+    </div>
+
+    <script src="storage.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
