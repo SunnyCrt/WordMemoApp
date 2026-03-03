@@ -4,11 +4,11 @@
   "description": "심플하고 예쁜 콤팩트 단어 메모장",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#f7f7f7",
+  "background_color": "#ffffff",
   "theme_color": "#555e67",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3220/3220793.png",
+      "src": "icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
