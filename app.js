@@ -305,6 +305,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('cancel-selection-btn').onclick = exitSelectionMode;
         document.getElementById('delete-selected-btn').onclick = () => showModal(elements.deleteModal);
+
+        // 이동 버튼 클릭 시 폴더 드롭다운 표시
+        document.getElementById('move-selected-btn').onclick = (e) => {
+            e.stopPropagation();
+            const btn = e.currentTarget;
+            const btnRect = btn.getBoundingClientRect();
+            const containerRect = document.querySelector('.mobile-container').getBoundingClientRect();
+
+            elements.folderDropdown.style.top = `${btnRect.top - containerRect.top - 200}px`; // 버튼 위로 표시
+            elements.folderDropdown.style.left = `${btnRect.left - containerRect.left - 100}px`;
+            elements.folderDropdown.style.width = '200px';
+
+            elements.folderDropdown.classList.remove('hidden');
+
+            // 폴더 선택 시 이동 처리
+            const originalFolders = Array.from(elements.folderListItems.children);
+            originalFolders.forEach(folderBtn => {
+                const originalOnClick = folderBtn.onclick;
+                folderBtn.onclick = (ev) => {
+                    ev.stopPropagation();
+                    const folderName = folderBtn.textContent;
+                    const folder = storage.getFolders().find(f => f.name === folderName);
+
+                    if (folder) {
+                        storage.moveWordsToFolder(Array.from(selectedWordIds), folder.id);
+                        exitSelectionMode();
+                        elements.folderDropdown.classList.add('hidden');
+                    }
+
+                    // 원래 로직으로 복원
+                    originalFolders.forEach((b, i) => b.onclick = originalFolders[i]._origClick);
+                };
+                folderBtn._origClick = originalOnClick;
+            });
+        };
+
         document.getElementById('delete-confirm').onclick = () => {
             storage.deleteWords(Array.from(selectedWordIds));
             exitSelectionMode();
